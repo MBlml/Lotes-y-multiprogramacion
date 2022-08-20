@@ -1,90 +1,133 @@
 import tkinter as tk
 from tkinter import ttk
+from threading import Thread
+from queue import Queue
+class Proceso:
+    #se definen los atributos privados de cada proceso
+    __nombre = ""
+    __estado = ""
+    __progressBar = any
+    
+    #definimos el contructor de la clase
+    def __init__(self, nombre, estado):
+        self.__nombre = nombre
+        self.__estado = estado
+        
+
+    #getters y setters para manipular atributos
+    def setNombre (self, nombre):
+        self.__nombre = nombre
+        
+    def getNombre (self):
+        return self.__nombre 
+
+    def setEstado (self, estado):
+        self.__estado = estado
+        
+    def getEstado (self):
+        return self.__estado
+    
+    def getProgressBar (self):
+        return self.__progressBar
+    
+    def iniciarProceso ():
+        pass
+    
+    #métodos para manipular la barra de carga de cada proceso
+    #los parametros con row solo son contadores para desplazar la fila con cada proceso agregado
+    def renderizarProceso (self, container, barRow, labelRow):
+        var = tk.IntVar()
+        var.set(0)
+        etiquetaNombreProceso = ttk.Label(text=self.getNombre())
+        etiquetaNombreProceso.grid(column=0, row=labelRow)
+        self.__progressBar = ttk.Progressbar(container, variable = var, orient = tk.HORIZONTAL, length=300)
+        self.__progressBar.grid(column=1, row=barRow)
+
+    def iniciarProceso ():
+        pass
+
+class Lote:
+    
+    __cola_procesos = Queue(maxsize = 15)
+    
+    def agregarProceso (self, proceso):
+        self.__cola_procesos.put(proceso)
+        print(self.__cola_procesos)
+        
+    def getColaProcesos(self):
+        return self.__cola_procesos
+
 
 root = tk.Tk()
-root.geometry("500x500")
-root.title("Lotes y multiprogramacion")
+root.geometry("750x700")
+root.title("Lotes y Multiprogramacion")
 
 contadorProcesos = 0
+barRowCounter = 2
+labelRowCounter = 2
 
 etiquetaNombreProceso = ttk.Label(text="Nombre del proceso: ")
 etiquetaNombreProceso.grid(column=0, row=0)
 entradaProceso = ttk.Entry()
 entradaProceso.grid(column=1, row=0)
 
-#Procesos a ejecutar (Numero,nombre y barra de progreso)
-etiquetaNombreProcesoActivo1 = ttk.Label(text="Proceso 1: ")
-etiquetaNombreProcesoActivo1.grid(column=0, row=1)
-procesoActivo1 = ttk.Entry()
-procesoActivo1.grid(column=0, row=2)
-progressbar1 = ttk.Progressbar(orient=tk.HORIZONTAL, length=200)
-progressbar1.grid(column=1, row=2)
-
-etiquetaNombreProcesoActivo2 = ttk.Label(text="Proceso 2: ")
-etiquetaNombreProcesoActivo2.grid(column=0, row=3)
-procesoActivo2 = ttk.Entry()
-procesoActivo2.grid(column=0, row=4)
-progressbar2 = ttk.Progressbar(orient=tk.HORIZONTAL, length=200)
-progressbar2.grid(column=1, row=4)
-
-etiquetaNombreProcesoActivo3 = ttk.Label(text="Proceso 3: ")
-etiquetaNombreProcesoActivo3.grid(column=0, row=5)
-procesoActivo3 = ttk.Entry()
-procesoActivo3.grid(column=0, row=6)
-progressbar3 = ttk.Progressbar(orient=tk.HORIZONTAL, length=200)
-progressbar3.grid(column=1, row=6)
-
-etiquetaNombreProcesoActivo4 = ttk.Label(text="Proceso 4: ")
-etiquetaNombreProcesoActivo4.grid(column=0, row=7)
-procesoActivo4 = ttk.Entry()
-procesoActivo4.grid(column=0, row=8)
-progressbar4 = ttk.Progressbar(orient=tk.HORIZONTAL, length=200)
-progressbar4.grid(column=1, row=8)
-
-etiquetaNombreProcesoActivo5 = ttk.Label(text="Proceso 5: ")
-etiquetaNombreProcesoActivo5.grid(column=0, row=9)
-procesoActivo5 = ttk.Entry()
-procesoActivo5.grid(column=0, row=10)
-progressbar5 = ttk.Progressbar(orient=tk.HORIZONTAL, length=200)
-progressbar5.grid(column=1, row=10)
+#definimos nuestro objeto de lote
+lote = Lote()
 
 #Funcion para mandar a imprimir los nombres en espacios de procesos
-def mandarDato1():
+def mandarDato():
+    global barRowCounter
+    global labelRowCounter
+    global inputRowCounter
     global contadorProcesos
-    contadorProcesos += 1
-    if (contadorProcesos == 1):
-        procesoActivo1.insert(0, entradaProceso.get() + " ")
-        print("Proceso almacenado: " + entradaProceso.get())
+    
+    if (entradaProceso.get() == "") | (lote.getColaProcesos().full()):
+        return
+    else:
+        proceso = Proceso(entradaProceso.get(), "")
+        proceso.renderizarProceso(root, barRowCounter, labelRowCounter)
         
-    if (contadorProcesos == 2):
-        procesoActivo2.insert(0, entradaProceso.get() + " ")
-        print("Proceso almacenado: " + entradaProceso.get())
+        labelRowCounter += 2
+        barRowCounter += 2
         
-    if (contadorProcesos == 3):
-        procesoActivo3.insert(0, entradaProceso.get() + " ")
-        print("Proceso almacenado: " + entradaProceso.get())
+        lote.agregarProceso(proceso)
+        # print(barRowCounter)
+    # if (contadorProcesos == 1):
+    #     procesoActivo1.insert(0, entradaProceso.get() + " ")
+    #     print("Proceso almacenado: " + entradaProceso.get())
         
-    if (contadorProcesos == 4):
-        procesoActivo4.insert(0, entradaProceso.get() + " ")
-        print("Proceso almacenado: " + entradaProceso.get())
+    # if (contadorProcesos == 2):
+    #     procesoActivo2.insert(0, entradaProceso.get() + " ")
+    #     print("Proceso almacenado: " + entradaProceso.get())
         
-    if (contadorProcesos == 5):
-        procesoActivo5.insert(0, entradaProceso.get() + " ")
-        print("Proceso almacenado: " + entradaProceso.get())
+    # if (contadorProcesos == 3):
+    #     procesoActivo3.insert(0, entradaProceso.get() + " ")
+    #     print("Proceso almacenado: " + entradaProceso.get())
+        
+    # if (contadorProcesos == 4):
+    #     procesoActivo4.insert(0, entradaProceso.get() + " ")
+    #     print("Proceso almacenado: " + entradaProceso.get())
+        
+    # if (contadorProcesos == 5):
+    #     procesoActivo5.insert(0, entradaProceso.get() + " ")
+    #     print("Proceso almacenado: " + entradaProceso.get())
 
 def procesoLotes():
-    for i in range (contadorProcesos+1):
-        if i == 1:
-            progressbar1.start()
-        if i == 2:
-            progressbar2.start()
-        if i == 3:
-            progressbar3.start()
-        if i == 4:
-            progressbar4.start()
-        if i == 5:
-            progressbar5.start()
-        i += 1
+    actual = lote.getColaProcesos().get()
+    print(actual.getProgressBar().start())
+    pass
+    # for i in range (contadorProcesos+1):
+    #     if i == 1:
+    #         progressbar1.start()
+    #     if i == 2:
+    #         progressbar2.start()
+    #     if i == 3:
+    #         progressbar3.start()
+    #     if i == 4:
+    #         progressbar4.start()
+    #     if i == 5:
+    #         progressbar5.start()
+    #     i += 1
         #Aqui agregar la funcion para que comience uno al finalizar el anterior
         #Agregar funcionalidad para detener todas las barras al llegar al 100%
 
@@ -110,19 +153,22 @@ def cancelar():
     progressbar4.stop()
     progressbar5.stop()
     print("Procesos cancelados")
-    
 #Boton para la funcion de enviar a imprimir
-buttonAgregar = ttk.Button(text="Agregar proceso", command=mandarDato1)
+buttonAgregar = ttk.Button(text="Agregar proceso", command=mandarDato)
 buttonAgregar.grid(column=2, row=0)
 
 buttonLotes = ttk.Button(text="Lotes", command=procesoLotes)
-buttonLotes.grid(column=2, row=11)
+buttonLotes.grid(column=3, row=0)
 
 buttonMultiprogramacion = ttk.Button(text="Multiprogramacion",command=procesoMultiprogramacion)
-buttonMultiprogramacion.grid(column=2, row=13)
+buttonMultiprogramacion.grid(column=4, row=0)
 
-buttonCancelar = ttk.Button(text="Cancelar",command=cancelar)
-buttonCancelar.grid(column=2, row=14)
+# buttonCancelar = ttk.Button(text="Cancelar",command=cancelar)
+# buttonCancelar.grid(column=3, row=1)
+
+
+
+
 
 root.mainloop()
 
