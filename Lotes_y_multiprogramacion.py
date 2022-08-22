@@ -18,6 +18,7 @@ class Proceso:
     def getNombre (self):
         return self.__nombre 
 
+    #el estado del proceso puede servir para multiprogramación
     def setEstado (self, estado):
         self.__estado = estado
         
@@ -86,7 +87,7 @@ def mandarDato():
     global labelRowCounter
     
     #limitamos los procesos a 15
-    if (entradaProceso.get() == "") | (lote.getCantProcesos() == 15):
+    if (entradaProceso.get() == "") | (lote.getCantProcesos() >= 15):
         return
     else:
         #Inicializamos el objeto proceso con el constructor
@@ -119,32 +120,6 @@ def lotes():
             root.update_idletasks()
         j += 1
         lote.pop()
-        
-
-def procesoMultiprogramacion():
-    pass
-    # for i in range (contadorProcesos+1):
-    #     if i == 1:
-    #         progressbar1.start(100)
-    #     if i == 2:
-    #         progressbar2.start(90)
-    #     if i == 3:
-    #         progressbar3.start(110)
-    #     if i == 4:
-    #         progressbar4.start(95)
-    #     if i == 5:
-    #         progressbar5.start(105)
-    #     i += 1
-    #Agregar funcionalidad para detener todas las barras al llegar al 100%
-
-def cancelar():
-    pass
-#     progressbar1.stop()
-#     progressbar2.stop()
-#     progressbar3.stop()
-#     progressbar4.stop()
-#     progressbar5.stop()
-#     print("Procesos cancelados")
 
 #Boton para la funcion de enviar a imprimir
 buttonAgregar = ttk.Button(text="Agregar proceso", command=mandarDato)
@@ -154,16 +129,4 @@ buttonAgregar.grid(column=2, row=0)
 buttonLotes = ttk.Button(text="Lotes", command=lotes)
 buttonLotes.grid(column=3, row=0)
 
-# buttonMultiprogramacion = ttk.Button(text="Multiprogramacion",command=procesoMultiprogramacion)
-# buttonMultiprogramacion.grid(column=4, row=0)
-
-# buttonCancelar = ttk.Button(text="Cancelar",command=cancelar)
-# buttonCancelar.grid(column=3, row=1)
-
-
 root.mainloop()
-
-#Para evitar descargarlo y tardar en abrir en algun dispositivo, tienen la opcion de correr el programa en https://replit.com, se parece a VSCODE
-#Faltantes: Funcion para "Lotes" que comience el siguiente proceso al finalizar el anterior, funcionalidad para detener todas las barras al llegar al 100%
-# y añadir estilos a la GUI en general para verse mas PRO
-#Si tienen duda mandan Whats xD, estare disponible el domingo para seguirle si hay mas cosas por hacer, segun yo solo queda eso jajaja
