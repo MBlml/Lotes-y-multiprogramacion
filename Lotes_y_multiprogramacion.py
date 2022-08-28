@@ -138,16 +138,16 @@ def multiprogramacion():
         valorRestante= procesoActual.getValue()
         #Si el proceso aun no de terminar de completar lo 'ejecutamos'
         if(valorRestante>0):
-            time.sleep(0.5)
+            time.sleep(0.005)
             #Se actualiza el valor restante del proceso y su barra de progreso
-            procesoActual.getProgressBar()['value'] += 10
-            procesoActual.setValue(valorRestante-10)
+            procesoActual.getProgressBar()['value'] += .5
+            procesoActual.setValue(valorRestante-.5)
             i += 1
             #Se actualiza la pantalla para animación de carga
             root.update_idletasks()
         else:
             #Si el proceso se completa lo sacamos de la cola y continuamos con los siguientes
-            lote.getColaProcesos().pop(nProceso)
+            lote.pop()
             i=0
             if(nProceso> lote.getCantProcesos()-1):
                 nProceso=0
